@@ -1,0 +1,74 @@
+package me.benzplayz;
+
+import java.util.logging.Logger;
+import me.benzplayz.Commands.Hello;
+import me.benzplayz.Commands.Info;
+import me.benzplayz.Commands.Menu;
+import me.benzplayz.event.block.BlockBreak;
+import me.benzplayz.event.inventory.InventoryClick;
+import me.benzplayz.event.other.ProjectileHit;
+import me.benzplayz.event.player.PlayerChat;
+import org.bukkit.Server;
+import org.bukkit.command.PluginCommand;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.FileConfigurationOptions;
+import org.bukkit.permissions.Permission;
+import org.bukkit.plugin.PluginDescriptionFile;
+import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.java.JavaPlugin;
+
+public class Tutorial
+  extends JavaPlugin
+{
+  public void onEnable()
+  {
+    PluginDescriptionFile pdfFile = getDescription();
+    Logger logger = getLogger();
+    
+    registerCommands();
+    registerEvents();
+    registerConfig();
+    registerPermissions();
+    
+    logger.info(pdfFile.getName() + " has been enabled " + pdfFile.getVersion());
+  }
+  
+  public void onDisable()
+  {
+    PluginDescriptionFile pdfFile = getDescription();
+    Logger logger = getLogger();
+    
+    logger.info(pdfFile.getName() + " has been disabled " + pdfFile.getVersion());
+  }
+  
+  private void registerCommands()
+  {
+    getCommand("hello").setExecutor(new Hello(this));
+    getCommand("menu").setExecutor(new Menu());
+    getCommand("info").setExecutor(new Info());
+  }
+  
+  public void registerEvents()
+  {
+    PluginManager pm = getServer().getPluginManager();
+    
+    pm.registerEvents(new BlockBreak(), this);
+    pm.registerEvents(new PlayerChat(), this);
+    pm.registerEvents(new InventoryClick(), this);
+    pm.registerEvents(new ProjectileHit(), this);
+  }
+  
+  private void registerConfig()
+  {
+    getConfig().options().copyDefaults(true);
+    saveConfig();
+  }
+  
+  private void registerPermissions()
+  {
+    Permission p = new Permission("snowball.plugin");
+    PluginManager pm = getServer().getPluginManager();
+    
+    pm.addPermission(p);
+  }
+}
